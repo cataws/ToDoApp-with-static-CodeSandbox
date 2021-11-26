@@ -4,29 +4,18 @@ const taskDelete = document.getElementsByClassName('task_delete')[0];
 const taskList = document.getElementsByClassName('task_list')[0];
 
 // ローカルストレージのデータを取得
-const getLocalStorage = () => {
-  return JSON.parse(localStorage.getItem('todo'));
-};
+const getLocalStorage = () => JSON.parse(localStorage.getItem('todo'));
 
 // ローカルストレージにデータを保存
-const setLocalStorage = (list) => {
+const setLocalStorage = (list) =>
   localStorage.setItem('todo', JSON.stringify(list));
-};
 
 // Deleteボタン押下時の処理
 const deleteTasks = (deleteButton) => {
   const chosenTask = deleteButton.closest('li');
   taskList.removeChild(chosenTask);
-
   // ローカルストレージに保存
-  const lStorage = getLocalStorage();
-  for (let i = 0; i < lStorage.length; i++) {
-    if (lStorage[i].item === chosenTask.id) {
-      lStorage.splice(i, 1);
-      setLocalStorage(lStorage);
-      break;
-    }
-  }
+  setLocalStorage(getLocalStorage().filter((ls) => ls.item !== chosenTask.id));
 };
 
 // Completeボタン押下時の処理(完了⇔未完了のトグル)
@@ -44,18 +33,14 @@ const completeTasks = (completeButton) => {
   }
 
   // 完了・未完了のデータをローカルストレージに保存
-  const lStorage = getLocalStorage();
-  for (let i = 0; i < lStorage.length; i++) {
-    if (lStorage[i].item === chosenTask.id) {
-      if (chosenTask.className === 'complete') {
-        lStorage[i].comp = 1;
-      } else {
-        lStorage[i].comp = 0;
-      }
-      setLocalStorage(lStorage);
-      break;
+  let tempStorage = [];
+  tempStorage = getLocalStorage().map((ls) => {
+    if (ls.item === chosenTask.id) {
+      ls.comp = chosenTask.className === 'complete' ? 1 : 0;
     }
-  }
+    return ls;
+  });
+  setLocalStorage(tempStorage);
 };
 
 // やること追加ボタン押下時③ ⇒ ボタンの作成
@@ -103,7 +88,6 @@ const addTasks = (task) => {
     lStorage = getLocalStorage();
   }
   lStorage.push({ item: task, comp: 0 });
-
   setLocalStorage(lStorage);
 };
 
@@ -117,14 +101,11 @@ taskSubmit.addEventListener('click', (evt) => {
     return;
   }
 
-  const lStorage = getLocalStorage();
-  if (lStorage !== null) {
-    for (let i = 0; i < lStorage.length; i++) {
-      if (lStorage[i].item === task) {
-        // タスクの重複は認めない
-        window.alert('タスクが重複しています');
-        return;
-      }
+  if (getLocalStorage() !== null) {
+    if (getLocalStorage().find((ls) => ls.item === task) !== undefined) {
+      // タスクの重複は認めない
+      window.alert('タスクが重複しています');
+      return;
     }
   }
 
@@ -147,15 +128,15 @@ document.addEventListener('DOMContentLoaded', () => {
     taskList.textContent = '';
   } else {
     // ローカルストレージに保存してあるデータを戻す
-    for (let i = 0; i < lStorage.length; i++) {
+    lStorage.forEach((ls) => {
       const listItem = document.createElement('li');
-      listItem.id = lStorage[i].item;
-      if (lStorage[i].comp === 1) {
+      listItem.id = ls.item;
+      if (ls.comp === 1) {
         listItem.setAttribute('class', 'complete');
       }
-      listItem.textContent = lStorage[i].item;
+      listItem.textContent = ls.item;
       taskList.appendChild(listItem);
       addButtons(listItem);
-    }
+    });
   }
 });
