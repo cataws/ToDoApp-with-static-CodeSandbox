@@ -1,0 +1,72 @@
+html {
+  font-size: 16px;
+}
+
+body,
+html {
+  width: 960px;
+  margin: 1rem 5rem;
+  font-family: sans-serif;
+}
+
+p {
+  display: inline;
+}
+
+.task_input {
+  height: 1.5rem;
+  margin-top: 30px;
+  margin-left: 30px;
+}
+
+.task_submit,
+.task_delete {
+  height: 2rem;
+}
+
+.task_button {
+  float: right;
+  display: flex;
+  margin-left: auto;
+  margin-right: 3px;
+}
+
+.complete {
+  text-decoration: line-through;
+  color: #c0c0c0;
+}
+
+.flex {
+  display: flex;
+}
+
+#table {
+  background-color: #c1e4e9;
+  width: 50%;
+  border-radius: 1rem;
+  margin-top: 2rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+  padding: 1rem;
+}
+
+li {
+  margin: 2rem 3rem 2rem 1rem;
+  /*display: flex;*/
+  /*  justify-content: space-between;*/
+  word-break: break-all;
+}
+
+ul {
+  list-style: none;
+  padding-bottom: 30px;
+  padding-inline-start: 20px;
+}
+
+ul li {
+  background: url(../pics/pow_icon.png) no-repeat 0 0;
+  background-size: auto 20px;
+  padding-left: 30px;
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang=>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ToDo List</title>
+    <link rel="stylesheet" href="src/styles.css" >
+  </head>
+
+  <body>
+    <h1>ToDo List</h1>
+    <div class="flex">
+      <img src="pics/neco_icon.png" alt="ネコアイコン" title="ネコ" width="10%">
+      <form class="task_form" onsubmit="return false;">
+        <input class="task_input" type="text" />
+        <button class="task_submit" type="button">やること追加</button>
+        <button class="task_delete" type="button">全削除</button>
+      </form>
+    </div>
+    <div id="table">
+      <h2>やることリスト</h2>
+      <ul class="task_list"></ul>
+    </div>
+
+    <script src="src/index.js"></script>
+  </body>
+</html>
