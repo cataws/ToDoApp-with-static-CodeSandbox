@@ -1,7 +1,7 @@
-const taskInput = document.getElementsByClassName('task_input')[0];
-const taskSubmit = document.getElementsByClassName('task_submit')[0];
-const taskDelete = document.getElementsByClassName('task_delete')[0];
-const taskList = document.getElementsByClassName('task_list')[0];
+const taskInput = document.getElementById('task_input');
+const taskSubmit = document.getElementById('task_submit');
+const taskDelete = document.getElementById('task_delete');
+const taskList = document.getElementById('task_list');
 
 // ローカルストレージに保存されたデータを取得
 const getPersistentTodos = () => {

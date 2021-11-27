@@ -13,14 +13,14 @@ p {
   display: inline;
 }
 
-.task_input {
+#task_input {
   height: 1.5rem;
   margin-top: 30px;
   margin-left: 30px;
 }
 
-.task_submit,
-.task_delete {
+#task_submit,
+#task_delete {
   height: 2rem;
 }
 
