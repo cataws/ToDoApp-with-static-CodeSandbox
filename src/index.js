@@ -3,19 +3,24 @@ const taskSubmit = document.getElementsByClassName('task_submit')[0];
 const taskDelete = document.getElementsByClassName('task_delete')[0];
 const taskList = document.getElementsByClassName('task_list')[0];
 
-// ローカルストレージのデータを取得
-const getLocalStorage = () => JSON.parse(localStorage.getItem('todo'));
-
+// ローカルストレージに保存されたデータを取得
+const getPersistentTodos = () => {
+  const noTodos = []; // ローカルストレージが空なら、空配列を返す
+  const persistentTodos = JSON.parse(localStorage.getItem('todo'));
+  return persistentTodos !== null ? persistentTodos : noTodos;
+};
 // ローカルストレージにデータを保存
-const setLocalStorage = (list) =>
-  localStorage.setItem('todo', JSON.stringify(list));
+const setPersistentTodos = (todo) =>
+  localStorage.setItem('todo', JSON.stringify(todo));
 
 // Deleteボタン押下時の処理
 const deleteTasks = (deleteButton) => {
   const chosenTask = deleteButton.closest('li');
   taskList.removeChild(chosenTask);
   // ローカルストレージに保存
-  setLocalStorage(getLocalStorage().filter((ls) => ls.item !== chosenTask.id));
+  setPersistentTodos(
+    getPersistentTodos().filter((todo) => todo.item !== chosenTask.id)
+  );
 };
 
 // Completeボタン押下時の処理(完了⇔未完了のトグル)
@@ -33,14 +38,14 @@ const completeTasks = (completeButton) => {
   }
 
   // 完了・未完了のデータをローカルストレージに保存
-  let tempStorage = [];
-  tempStorage = getLocalStorage().map((ls) => {
-    if (ls.item === chosenTask.id) {
-      ls.comp = chosenTask.className === 'complete' ? 1 : 0;
+  let persistentTodos = [];
+  persistentTodos = getPersistentTodos().map((todo) => {
+    if (todo.item === chosenTask.id) {
+      todo.comp = chosenTask.className === 'complete' ? true : false;
     }
-    return ls;
+    return todo;
   });
-  setLocalStorage(tempStorage);
+  setPersistentTodos(persistentTodos);
 };
 
 // やること追加ボタン押下時③ ⇒ ボタンの作成
@@ -83,12 +88,9 @@ const addTasks = (task) => {
   addButtons(listItem);
 
   // ローカルストレージに保存
-  let lStorage = [];
-  if (getLocalStorage() !== null) {
-    lStorage = getLocalStorage();
-  }
-  lStorage.push({ item: task, comp: 0 });
-  setLocalStorage(lStorage);
+  const persistentTodos = getPersistentTodos();
+  persistentTodos.push({ item: task, comp: false });
+  setPersistentTodos(persistentTodos);
 };
 
 // やること追加ボタン押下時① ⇒ エラー処理
@@ -101,12 +103,12 @@ taskSubmit.addEventListener('click', (evt) => {
     return;
   }
 
-  if (getLocalStorage() !== null) {
-    if (getLocalStorage().find((ls) => ls.item === task) !== undefined) {
-      // タスクの重複は認めない
-      window.alert('タスクが重複しています');
-      return;
-    }
+  const persistentTodos = getPersistentTodos();
+  const found = persistentTodos.find((todo) => todo.item === task);
+  if (found) {
+    // タスクの重複は認めない
+    window.alert('タスクが重複しています');
+    return;
   }
 
   addTasks(task);
@@ -122,19 +124,16 @@ taskDelete.addEventListener('click', (evt) => {
 
 // Reload時の処理
 document.addEventListener('DOMContentLoaded', () => {
-  const lStorage = getLocalStorage();
-
-  if (lStorage === null) {
-    taskList.textContent = '';
-  } else {
+  const persistentTodos = getPersistentTodos();
+  if (persistentTodos.length !== 0) {
     // ローカルストレージに保存してあるデータを戻す
-    lStorage.forEach((ls) => {
+    persistentTodos.forEach((todo) => {
       const listItem = document.createElement('li');
-      listItem.id = ls.item;
-      if (ls.comp === 1) {
+      listItem.id = todo.item;
+      if (todo.comp === true) {
         listItem.setAttribute('class', 'complete');
       }
-      listItem.textContent = ls.item;
+      listItem.textContent = todo.item;
       taskList.appendChild(listItem);
       addButtons(listItem);
     });
