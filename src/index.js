@@ -5,9 +5,8 @@ const taskList = document.getElementById('task_list');
 
 // ローカルストレージに保存されたデータを取得
 const getPersistentTodos = () => {
-  const noTodos = []; // ローカルストレージが空なら、空配列を返す
   const persistentTodos = JSON.parse(localStorage.getItem('todo'));
-  return persistentTodos !== null ? persistentTodos : noTodos;
+  return persistentTodos ?? []; // ローカルストレージが空なら、空配列を返す
 };
 // ローカルストレージにデータを保存
 const setPersistentTodos = (todo) =>
@@ -17,10 +16,12 @@ const setPersistentTodos = (todo) =>
 const deleteTasks = (deleteButton) => {
   const chosenTask = deleteButton.closest('li');
   taskList.removeChild(chosenTask);
-  // ローカルストレージに保存
-  setPersistentTodos(
-    getPersistentTodos().filter((todo) => todo.item !== chosenTask.id)
+
+  const deletedTodos = getPersistentTodos().filter(
+    (todo) => todo.item !== chosenTask.id
   );
+  // 削除済のデータをローカルストレージに保存
+  setPersistentTodos(deletedTodos);
 };
 
 // Completeボタン押下時の処理(完了⇔未完了のトグル)
@@ -38,10 +39,9 @@ const completeTasks = (completeButton) => {
   }
 
   // 完了・未完了のデータをローカルストレージに保存
-  let persistentTodos = [];
-  persistentTodos = getPersistentTodos().map((todo) => {
+  const persistentTodos = getPersistentTodos().map((todo) => {
     if (todo.item === chosenTask.id) {
-      todo.comp = chosenTask.className === 'complete' ? true : false;
+      todo.isCompleted = chosenTask.className === 'complete' ? true : false;
     }
     return todo;
   });
@@ -89,7 +89,7 @@ const addTasks = (task) => {
 
   // ローカルストレージに保存
   const persistentTodos = getPersistentTodos();
-  persistentTodos.push({ item: task, comp: false });
+  persistentTodos.push({ item: task, isCompleted: false });
   setPersistentTodos(persistentTodos);
 };
 
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     persistentTodos.forEach((todo) => {
       const listItem = document.createElement('li');
       listItem.id = todo.item;
-      if (todo.comp === true) {
+      if (todo.isCompleted) {
         listItem.setAttribute('class', 'complete');
       }
       listItem.textContent = todo.item;
